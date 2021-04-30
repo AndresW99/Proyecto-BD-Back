@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+
+const db = require('../db/connection');
  
 class Server {
 
@@ -15,6 +17,9 @@ class Server {
 
         }
 
+        // Base de datos
+        this.dbConnection();
+
         // Rutas de mi aplicacion
         this.routes();
 
@@ -27,6 +32,20 @@ class Server {
             this.app.listen( this.port, () => {
             console.log('Sevidor corriendo en puerto', this.port );
         });
+    }
+
+    // Conexion a la base de datos
+    async dbConnection() {
+
+        try {
+            
+            await db.authenticate();
+            console.log('Database online');
+
+        } catch (error) {
+            throw new Error( error );
+        }
+
     }
 
     middlewares() {
