@@ -20,11 +20,12 @@ class Server {
         // Base de datos
         this.dbConnection();
 
+        // Middlewares
+        this.middlewares();
+        
         // Rutas de mi aplicacion
         this.routes();
 
-        // Middlewares
-        this.middlewares();
     }
 
 
@@ -52,12 +53,13 @@ class Server {
 
         // CORS 
         this.app.use( cors() );
+        
+        // Directorio publico que buscara el backend 
+        this.app.use( express.static('public') );
 
         // Lectura y parseo del body
         this.app.use( express.json() );
 
-        // Directorio publico que buscara el backend 
-        this.app.use( express.static('public') );
 
     }
 

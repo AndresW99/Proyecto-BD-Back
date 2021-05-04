@@ -1,18 +1,24 @@
+/*
+    path: /api/usuarios
+*/
+
 const { Router } = require('express');
 
-const { usuarioGet,
-        usuarioPut,
-        usuarioPost,
-        usuarioDelete } = require('../controllers/usuario');
+const { usuarioPost,
+        obtenerUsuarios,
+        obtenerUsuariosPorId } = require('../controllers/usuario');
 
 const router = Router();
 
-router.get('/', usuarioGet );
 
-router.put('/:id', usuarioPut );
-
+//Crear usuario
 router.post('/', usuarioPost );
 
-router.delete('/:id', usuarioDelete );
+//Obtener usuarios
+router.get('/', obtenerUsuarios);
+
+// Obtener usuario por ID
+router.get('/:id', obtenerUsuariosPorId );
+
 
 module.exports = router;
