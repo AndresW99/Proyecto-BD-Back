@@ -3,26 +3,23 @@ const db = require('../db/connection');
 
 // Protege de inyecciones SQL o de envio incorrecto de informacion
 
-const Usuario = db.define('Usuario', {
+const Producto = db.define('Producto', {
 
     nombre: {
         type: DataTypes.STRING
     },
-    correo: {
+    precio: {
         type: DataTypes.STRING
     },
-    contrasenia: {
-        type: DataTypes.STRING
+    stock: {
+        type: DataTypes.NUMBER
     },
     estado: {
         type: DataTypes.BOOLEAN
     },
-    rol: {
-        type: DataTypes.STRING
-    }
 }, {
     createdAt: false,
     updatedAt: false,
 });
 
-module.exports = Usuario;
+module.exports = Producto;

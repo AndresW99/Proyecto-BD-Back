@@ -5,32 +5,15 @@
 const { response } = require('express');
 const Usuario = require('../models/usuario');
 
-// Crear usuario
-const usuarioPost = async( req, res = response ) => {
-
-    // Recibimos los datos que envian en el body
-    const { nombre, correo, password } = ( req.body );
-
-    if( nombre.length < 5 ) {
-        return res.status(400).json({
-            ok: false,
-            msg: 'El nombre debe tener minimo 5 letras'
-        });
-    }
-
-    res.json({
-        ok: true,
-        nombre,
-        correo,
-        password
-    });
-
-}
 
 const obtenerUsuarios = async( req, res = response ) => {
 
     // Buscamos a los usuarios
-    const usuarios = await Usuario.findAll();
+    const usuarios = await Usuario.findAll({
+        where: {
+            estado: true
+        }
+    });
 
     res.json( {usuarios} );
 
@@ -38,9 +21,18 @@ const obtenerUsuarios = async( req, res = response ) => {
 
 const obtenerUsuariosPorId = async( req, res = response ) => {
 
+    // Extraemos el id de los params
     const { id } = req.params; 
 
+    // Buscmaos al usaurio por su id
     const usuario = await Usuario.findByPk( id );
+
+    // Si el usuario esta inactivo no lo muestra
+    if( usuario.estado === false ) {
+        return res.status(400).json({
+            msg: `El usuario con el id ${ id } esta inactivo`
+        });
+    }
 
     // Validamos que exista el id
     if ( !usuario ) {
@@ -53,8 +45,64 @@ const obtenerUsuariosPorId = async( req, res = response ) => {
 
 }
 
+const actualizarUsuario = async( req, res = response ) => {
+
+    const { id } = req.params;
+    // Extraemos los campos que no queremos que se puedan actualizar
+    const { apellido, ...resto } = req.body;
+
+    try {
+
+        // Busca al usuario por su id en la BD 
+        const usuario = await Usuario.findByPk( id );
+        // Si el usuario no existe devuelve error 404
+        if( !usuario ) {
+            return res.status(404).json({
+                msg: 'No existe un usuario con el id ' + id
+            });
+        }
+
+        // Actualizamos los datos que estan en nuestro modelo
+        await usuario.update( resto );
+
+        res.json( usuario );
+
+    } catch (error) {
+        
+        console.log(error);
+        res.status(500).json({
+            msg: 'Hable con el administrador'
+        });
+
+    }
+}
+
+const eliminarUsuario = async( req, res = response ) => {
+
+    const { id } = req.params;
+
+    // Busca al usuario por su id en la BD 
+    const usuario = await Usuario.findByPk( id );
+    // Si el usuario no existe devuelve error 404
+    if( !usuario ) {
+        return res.status(404).json({
+            msg: 'No existe un usuario con el id ' + id
+        });
+    }
+
+    // Eliminacion fisica
+    // await usuario.destroy();
+
+    // Eliminacion logica
+    await usuario.update({ estado: false })
+
+    res.json( usuario );
+
+}
+
 module.exports = {
-    usuarioPost,
+    actualizarUsuario,
+    eliminarUsuario,
     obtenerUsuarios,
     obtenerUsuariosPorId,
 }

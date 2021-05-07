@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+require('../db/associations');
 
 const db = require('../db/connection');
  
@@ -13,7 +14,9 @@ class Server {
         // Rutas del endpoint
         this.paths = {
 
-            usuario: '/api/usuarios',
+            usuario:  '/api/usuarios',
+            auth:     '/api/auth',
+            producto: '/api/productos',
 
         }
 
@@ -26,13 +29,6 @@ class Server {
         // Rutas de mi aplicacion
         this.routes();
 
-    }
-
-
-        listen() {
-            this.app.listen( this.port, () => {
-            console.log('Sevidor corriendo en puerto', this.port );
-        });
     }
 
     // Conexion a la base de datos
@@ -66,7 +62,15 @@ class Server {
     routes() {
 
         this.app.use( this.paths.usuario, require('../routes/usuario') );
+        this.app.use( this.paths.auth, require('../routes/auth') );
+        this.app.use( this.paths.producto, require('../routes/producto') );
 
+    }
+
+    listen() {
+        this.app.listen( this.port, () => {
+        console.log('Sevidor corriendo en puerto', this.port );
+        });
     }
 }
 
