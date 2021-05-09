@@ -94,7 +94,7 @@ const eliminarUsuario = async( req, res = response ) => {
     // await usuario.destroy();
 
     // Eliminacion logica
-    await usuario.update({ estado: false })
+    await usuario.update({ estado: false });
 
     res.json( usuario );
 
