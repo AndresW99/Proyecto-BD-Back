@@ -9,10 +9,10 @@ const { obtenerUsuarios,
         obtenerUsuariosPorId, 
         actualizarUsuario,
         eliminarUsuario} = require('../controllers/usuario');
-// const { existeUsuarioPorId } = require('../helpers/db-validators');
 
-const { validarCampos } = require('../middlewares/validar-campos');
-const { validarJWT } = require('../middlewares/validar-jwt');
+const { validarCampos,
+        validarJWT,
+        esAdminRole } = require('../middlewares');
 
 const router = Router();
 
@@ -30,6 +30,7 @@ router.delete(
     '/:id',
     [ 
         validarJWT, 
+        esAdminRole,
         validarCampos,
     ], 
     eliminarUsuario );
