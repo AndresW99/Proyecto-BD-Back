@@ -4,59 +4,62 @@
 
 const { response } = require('express');
 
-// const Producto = require('../models/producto');
 const Proveedor = require('../models/proveedor');
 
+const obtenerProveedor = async( req, res = response ) => {
+
+    // Buscamos a los proveedores
+    const proveedor = await Proveedor.findAll({
+        where: {
+            estado: true
+        }
+    });
+
+    res.json( {proveedor} );
+
+}
 
 const crearProveedor = async( req, res = response ) => {
 
-    const { body } = req;
+    const nombre = req.body.nombre.toUpperCase();
 
     try {
 
-        // Buscara si ya existe un proveedor
+        // Verifica si existe el proveedor
         const existeProveedor = await Proveedor.findOne({
             where: {
-                nombre: body.nombre
+                nombre: nombre
             }
-        });
-
-        // Si ya existe alguien con ese nombre no continua
+        }); 
+        
+        // Si existe entonces devuelve error
         if( existeProveedor ) {
             return res.status(400).json({
-                msg: 'Ya existe el proveedor: '+ body.nombre
+                msg: `Ya existe el proveedor: ${ existeProveedor.nombre }`
             });
         }
-
-        // Creamos el nuevo proveedor
-        const proveedor = new Proveedor( body );
-        await proveedor.save();
-
-        res.json( proveedor );
-
-    } catch (error) {
+    
+        // Generar data a guardar con el uid el JWT
+        const data = {
+            nombre,
+            usuario: req.usuario.id
+        }
         
-        console.log(error);
+        // Creamos el nuevo proveedor
+        const proveedor = new Proveedor( data );
+        
+        // Lo guardamos
+        await proveedor.save();
+    
+        res.status(201).json( proveedor );
+        
+    } catch (error) {
+        console.log(error)
         res.status(500).json({
-            msg: 'Hable con el administrador'
+        msg: 'Hable con el administrador'
         });
-
     }
 }
-
-
-// const obtenerProveedor = async( req, res = response ) => {
-
-//     // Buscamos a los proveedores
-//     const proveedor = await Proveedor.findAll({
-//         where: {
-//             estado: true
-//         }
-//     });
-
-//     res.json( {productos} );
-
-// }
 
 const actualizarProveedor = async( req, res = response ) => {
 
@@ -103,9 +106,6 @@ const eliminarProveedor = async( req, res = response ) => {
         });
     }
 
-    // Eliminacion fisica
-    // await usuario.destroy();
-
     // Eliminacion logica
     await proveedor.update({ estado: false })
 
@@ -117,5 +117,5 @@ module.exports = {
     crearProveedor,
     eliminarProveedor,
     actualizarProveedor,
-
+    obtenerProveedor,
 }

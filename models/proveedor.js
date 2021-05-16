@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+const Usuario = require('../models/usuario');
 const db = require('../db/connection');
 
 // Protege de inyecciones SQL o de envio incorrecto de informacion
@@ -14,6 +15,10 @@ const Proveedor = db.define('Proveedore', {
     disponible: {
         type: DataTypes.BOOLEAN,
     },
+    usuario: {
+        type: Usuario,
+        references: 'Usuario'
+    }
 }, {
     createdAt: false,
     updatedAt: false,
