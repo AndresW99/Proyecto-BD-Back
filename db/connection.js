@@ -1,8 +1,8 @@
 const { Sequelize } = require('sequelize');
 
-// Conexion a la base MSSQL
+// Connection to MSSQL
 const db = new Sequelize('Cafeteria', process.env.SQL_NAME, process.env.SQL_PASS, {
-    host: 'localhost' || process.env.PORT,
+    host: 'localhost',
     dialect: 'mssql',
     // logging: false,
 });

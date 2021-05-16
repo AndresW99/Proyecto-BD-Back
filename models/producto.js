@@ -17,6 +17,14 @@ const Producto = db.define('Producto', {
     estado: {
         type: DataTypes.BOOLEAN
     },
+    UsuarioId: {
+        type: DataTypes.NUMBER,
+        references: 'Usuario'
+    },
+    ProveedoreId: {
+        type: DataTypes.NUMBER,
+        references: 'Proveedor'
+    }
 }, {
     createdAt: false,
     updatedAt: false,

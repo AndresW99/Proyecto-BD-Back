@@ -4,6 +4,7 @@
 
 const { response } = require('express');
 const Producto = require('../models/producto');
+const Proveedor = require('../models/proveedor');
 const Usuario = require('../models/usuario');
 
 
@@ -47,15 +48,20 @@ const crearProducto = async( req, res = response ) => {
 const obtenerProductos = async( req, res = response ) => {
 
     // Buscamos a los usuarios
-    const productos = await Producto.findAll({
+    const productos = await Producto.findAndCountAll({
         where: {
             estado: true
         },
-        // Busca la relacion y muestra el usuario que creo el producto
-        include: {
+        attributes: ['id', 'nombre', 'precio', 'stock'],
+        limit: 5,
+        // Busca la relacion para mostrar el usuario y proveedor del producto
+        include: [{
             model: Usuario,
             attributes: ['nombre', 'rol']
-        }
+        },{
+            model: Proveedor,
+            attributes: ['nombre', 'disponible']
+        }],
     });
 
     res.json( {productos} );
