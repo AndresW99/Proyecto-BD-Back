@@ -10,7 +10,7 @@ const { crearProveedor,
         eliminarProveedor, 
         obtenerProveedor} = require('../controllers/proveedor');
 
-const { validarJWT, validarCampos } = require('../middlewares');
+const { validarJWT, validarCampos, esAdminRole } = require('../middlewares');
 
 const router = Router();
 
@@ -28,13 +28,21 @@ router.post(
 router.get('/', obtenerProveedor );
 
 // Actualizar proveedor
-router.put('/:id', [ validarCampos ], actualizarProveedor);
+router.put(
+    '/:id', 
+    [ 
+        validarJWT,
+        check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+        validarCampos
+    ], 
+    actualizarProveedor);
 
 // Eliminación de proveedor
 router.delete(
     '/:id', 
     [
-        validarCampos 
+        validarJWT,
+        esAdminRole,
     ], 
     eliminarProveedor );
 

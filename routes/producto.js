@@ -10,6 +10,7 @@ const { obtenerProductos,
         actualizarProducto,
         eliminarProducto, 
         crearProducto} = require('../controllers/producto');
+const { esAdminRole } = require('../middlewares');
 
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
@@ -21,7 +22,7 @@ router.post(
     '/', 
     [
         validarJWT,
-        // check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+        check('nombre', 'El nombre es obligatorio').not().isEmpty(),
         check('precio', 'El precio es obligatorio').not().isEmpty(),
         check('stock', 'El stock es obligatorio').not().isEmpty(),
         validarCampos,
@@ -31,14 +32,27 @@ router.post(
 //Obtener productos
 router.get('/', obtenerProductos);
 
-// Obtener usuario por ID
+// Obtener producto por ID
 router.get('/:id', [ validarCampos ], obtenerProductosPorId );
 
-// Actualizar usuario
-router.put('/:id', [ validarCampos ], actualizarProducto );
+// Actualizar producto
+router.put(
+    '/:id', 
+    [   
+        validarJWT,
+        check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+        check('precio', 'El precio es obligatorio').not().isEmpty(),
+        check('stock', 'El stock es obligatorio').not().isEmpty(),
+        validarCampos 
+    ], actualizarProducto );
 
-// Eliminación de usuarios
-router.delete('/:id', [ validarCampos ], eliminarProducto );
+// Eliminación de productos
+router.delete(
+    '/:id', 
+    [ 
+        validarJWT,
+        esAdminRole,
+    ], eliminarProducto );
 
 
 module.exports = router;

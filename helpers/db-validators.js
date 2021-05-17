@@ -1,3 +1,4 @@
+const Proveedor = require('../models/proveedor');
 const Usuario = require('../models/usuario');
 
 
@@ -14,6 +15,19 @@ const existeUsuarioPorId = async( id ) => {
     }
 } 
 
+const existeProveedor = async( id ) => {
+
+    const proveedor = await Proveedor.findByPk( id );
+
+    if( !proveedor ) {
+        return res.status(404).json({
+            msg: `No existe un proveedor con el id: ${ proveedor }`
+        });
+    }
+
+}
+
 module.exports = {
     existeUsuarioPorId,
+    existeProveedor
 }

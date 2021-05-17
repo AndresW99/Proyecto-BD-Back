@@ -90,9 +90,6 @@ const eliminarUsuario = async( req, res = response ) => {
         });
     }
 
-    // Eliminacion fisica
-    // await usuario.destroy();
-
     // Eliminacion logica
     await usuario.update({ estado: false });
 

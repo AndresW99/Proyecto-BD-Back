@@ -42,7 +42,7 @@ const crearProveedor = async( req, res = response ) => {
         // Generar data a guardar con el uid el JWT
         const data = {
             nombre,
-            usuario: req.usuario.id
+            usuario: req.usuario.nombre
         }
         
         // Creamos el nuevo proveedor
@@ -66,6 +66,10 @@ const actualizarProveedor = async( req, res = response ) => {
     const { id } = req.params;
     // Extraemos los campos que no queremos que se puedan actualizar
     const { estado, ...resto } = req.body;
+    // Pasamos todo a mayusculas
+    resto.nombre  = resto.nombre.toUpperCase();
+    // Actualiza el nombre de quien lo creo
+    resto.usuario = req.usuario.nombre;
 
     try {
 
@@ -99,7 +103,7 @@ const eliminarProveedor = async( req, res = response ) => {
 
     // Busca al proveedor por su id en la BD 
     const proveedor = await Proveedor.findByPk( id );
-    // Si el usuario no existe devuelve error 404
+    // Si el proveedor no existe devuelve error 404
     if( !proveedor ) {
         return res.status(404).json({
             msg: 'No existe el proveedor con el id ' + id

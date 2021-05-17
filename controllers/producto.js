@@ -10,26 +10,28 @@ const Usuario = require('../models/usuario');
 
 const crearProducto = async( req, res = response ) => {
 
-    const { body } = req;
+    const { estado, ...resto } = req.body;
+
+    resto.nombre = resto.nombre.toUpperCase();
 
     try {
 
         // Buscara si ya existe el producto
         const existeProducto = await Producto.findOne({
             where: {
-                nombre: body.nombre
+                nombre: resto.nombre
             }
         });
 
-        // Si ya existe alguien con ese correo no continua
+        // Si ya existe alguien con ese nombre no continua
         if( existeProducto ) {
             return res.status(400).json({
-                msg: 'Ya existe el producto: '+ body.nombre
+                msg: 'Ya existe el producto: '+ resto.nombre
             });
         }
 
         // Creamos el nuevo producto
-        const producto = new Producto( body );
+        const producto = new Producto( resto );
         await producto.save();
 
         res.json( producto );
@@ -53,7 +55,6 @@ const obtenerProductos = async( req, res = response ) => {
             estado: true
         },
         attributes: ['id', 'nombre', 'precio', 'stock'],
-        limit: 5,
         // Busca la relacion para mostrar el usuario y proveedor del producto
         include: [{
             model: Usuario,
@@ -67,6 +68,7 @@ const obtenerProductos = async( req, res = response ) => {
     res.json( {productos} );
 
 }
+
 
 const obtenerProductosPorId = async( req, res = response ) => {
 
@@ -99,6 +101,9 @@ const actualizarProducto = async( req, res = response ) => {
     const { id } = req.params;
     // Extraemos los campos que no queremos que se puedan actualizar
     const { estado, ...resto } = req.body;
+
+    // Pasamos todo a mayuscula
+    resto.nombre = resto.nombre.toUpperCase();
 
     try {
 
@@ -138,9 +143,6 @@ const eliminarProducto = async( req, res = response ) => {
             msg: 'No existe el producto con el id ' + id
         });
     }
-
-    // Eliminacion fisica
-    // await usuario.destroy();
 
     // Eliminacion logica
     await producto.update({ estado: false })
