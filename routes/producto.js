@@ -33,14 +33,13 @@ router.post(
 router.get('/', obtenerProductos);
 
 // Obtener producto por ID
-router.get('/:id', [ validarCampos ], obtenerProductosPorId );
+router.get('/:id', obtenerProductosPorId );
 
 // Actualizar producto
 router.put(
     '/:id', 
     [   
         validarJWT,
-        check('nombre', 'El nombre es obligatorio').not().isEmpty(),
         check('precio', 'El precio es obligatorio').not().isEmpty(),
         check('stock', 'El stock es obligatorio').not().isEmpty(),
         validarCampos 

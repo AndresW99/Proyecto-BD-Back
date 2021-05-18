@@ -3,6 +3,8 @@
 */
 
 const { response } = require('express');
+const bcryptjs = require('bcryptjs');
+
 const Usuario = require('../models/usuario');
 
 
@@ -49,8 +51,8 @@ const actualizarUsuario = async( req, res = response ) => {
 
     const { id } = req.params;
     // Extraemos los campos que no queremos que se puedan actualizar
-    const { apellido, ...resto } = req.body;
-
+    const { estado, rol, contrasenia, ...resto } = req.body;
+    
     try {
 
         // Busca al usuario por su id en la BD 
@@ -60,6 +62,12 @@ const actualizarUsuario = async( req, res = response ) => {
             return res.status(404).json({
                 msg: 'No existe un usuario con el id ' + id
             });
+        }
+
+        // Encriptamos la contra al actualizar
+        if ( contrasenia ) {
+            const salt = bcryptjs.genSaltSync();
+            resto.contrasenia = bcryptjs.hashSync( contrasenia, salt );
         }
 
         // Actualizamos los datos que estan en nuestro modelo

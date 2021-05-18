@@ -3,6 +3,7 @@
 */
 
 const { Router } = require('express');
+const { check } = require('express-validator');
 
 const { obtenerUsuarios,
         obtenerUsuariosPorId, 
@@ -19,10 +20,17 @@ const router = Router();
 router.get('/', obtenerUsuarios);
 
 // Obtener usuario por ID
-router.get('/:id', [ validarCampos ], obtenerUsuariosPorId );
+router.get('/:id', obtenerUsuariosPorId );
 
 // Actualizar usuario
-router.put('/:id', [ validarCampos ], actualizarUsuario );
+router.put(
+    '/:id', 
+    [ 
+        validarJWT,
+        check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+        check('correo', 'El correo es obligatorio').not().isEmpty(),
+        validarCampos 
+    ], actualizarUsuario );
 
 // Eliminación de usuarios
 router.delete(
