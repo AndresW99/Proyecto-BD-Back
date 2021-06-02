@@ -15,7 +15,7 @@ const obtenerProveedor = async( req, res = response ) => {
         }
     });
 
-    res.json( {proveedor} );
+    res.json( proveedor );
 
 }
 

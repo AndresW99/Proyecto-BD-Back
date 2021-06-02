@@ -50,7 +50,7 @@ const crearProducto = async( req, res = response ) => {
 const obtenerProductos = async( req, res = response ) => {
 
     // Buscamos a los usuarios
-    const productos = await Producto.findAndCountAll({
+    const productos = await Producto.findAll({
         where: {
             estado: true
         },
@@ -58,14 +58,14 @@ const obtenerProductos = async( req, res = response ) => {
         // Busca la relacion para mostrar el usuario y proveedor del producto
         include: [{
             model: Usuario,
-            attributes: ['nombre', 'rol']
+            attributes: ['id','nombre', 'rol']
         },{
             model: Proveedor,
-            attributes: ['nombre', 'disponible']
+            attributes: ['id', 'nombre', 'disponible']
         }],
     });
 
-    res.json( {productos} );
+    res.json( productos );
 
 }
 

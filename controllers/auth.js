@@ -28,17 +28,30 @@ const crearUsuario = async( req, res = response ) => {
         }
 
         // Creamos el nuevo usuario
-        const usuario = new Usuario({ nombre, correo, contrasenia });
+        const usuario = new Usuario( req.body );
 
         // Encriptar la contraseña
         // El salt es el numero de vueltas que data el hash - por defecto es 10
         const salt = bcryptjs.genSaltSync();
         usuario.contrasenia = bcryptjs.hashSync( contrasenia, salt );
-
+        
         // Guarda al usuario
         await usuario.save();
+        
+        // Generar JWT
+        const token = await generarJWT( usuario.id );
 
-        res.json( usuario );
+
+        res.json({
+            ok: true,
+            id: usuario.id,
+            nombre: usuario.nombre,
+            correo: usuario.correo,
+            contrasenia: usuario.contrasenia,
+            estado: usuario.estado,
+            rol: usuario.rol,
+            token
+        });
 
     } catch (error) {
         
@@ -66,7 +79,7 @@ const loginUsuario = async( req, res = response ) => {
         // Si no existe lanza error
         if( !usuario ) {
             return res.status(400).json({
-                msg: 'Usuario / password no son correctos - correo'
+                msg: 'Usuario / password no son correctos'
             })
         }
 
@@ -81,7 +94,7 @@ const loginUsuario = async( req, res = response ) => {
         const validarContra = bcryptjs.compareSync( contrasenia, usuario.contrasenia );
         if ( !validarContra ) {
             return res.status(400).json({
-                msg: 'Usuario / password no son correctos - contrasenia'
+                msg: 'Usuario / password no son correctos'
             });
         }
 
@@ -89,7 +102,13 @@ const loginUsuario = async( req, res = response ) => {
         const token = await generarJWT( usuario.id );
         
         res.json({
-            usuario,
+            ok: true,
+            id: usuario.id,
+            nombre: usuario.nombre,
+            correo: usuario.correo,
+            contrasenia: usuario.contrasenia,
+            estado: usuario.estado,
+            rol: usuario.rol,
             token
         })
 
@@ -101,10 +120,17 @@ const loginUsuario = async( req, res = response ) => {
     }
 }
 
-const revalidarToken = ( req, res = response ) => {
+const revalidarToken = async( req, res = response ) => {
+
+    const { usuario } = req;
+
+    const token = await generarJWT( usuario.id);
 
     res.json({
-        msg: 'token'
+        ok: true,
+        id: usuario.id,
+        nombre: usuario.nombre,
+        token
     });
 }
 

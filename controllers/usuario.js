@@ -17,7 +17,7 @@ const obtenerUsuarios = async( req, res = response ) => {
         }
     });
 
-    res.json( {usuarios} );
+    res.json( usuarios );
 
 }
 
